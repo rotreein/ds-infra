@@ -25,11 +25,11 @@ jobs:
       shell: pwsh
       run: |
         cd modules/network
-        terraform init -backend-config="./tfvars/terraform_state.tfvars"
-        terraform plan -var-file="./tfvars/terraform.tfvars"
+        terraform init --reconfigure
+        terraform plan -var-file=../../environments/staging/network/terraform.tfvars -lock=false
         
     - name: Terraform apply
       shell: pwsh
       run: |
         cd modules/network
-        terraform apply -auto-approve -var-file="./tfvars/terraform.tfvars" 
+        terraform apply --auto-approve -var-file=../../environments/dev/network/terraform.tfvars -lock=false
