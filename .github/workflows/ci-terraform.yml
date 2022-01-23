@@ -25,9 +25,8 @@ jobs:
       shell: pwsh
       run: |
         cd modules/network
-        terraform init --reconfigure
-        cd ../../
-        pwd
+        echo "Terraform Init"
+        terraform init --reconfigure  > /dev/null
         terraform plan -var-file=../../environments/staging/network/terraform.tfvars -lock=false
         
     - name: Terraform apply
