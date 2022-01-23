@@ -1,13 +1,17 @@
+name: Terraform
+
 on:
   push:
     branches:
       - master
-     
-name: Terraform Apply
+  pull_request:
+    branches:
+      - master
+    
 
 jobs:
         
-  TfApply:
+  terraform:
     name: TfApply
     runs-on: ubuntu-latest
     steps:
@@ -21,7 +25,17 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.REGION }}
 
+    - name: Terraform Format
+      id: fmt
+      run: terraform fmt -check
+
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate -no-color
+
     - name: Terraform plan
+      id: plan
+      if: github.event_name == 'pull_request'
       shell: pwsh
       run: |
         cd modules/network
