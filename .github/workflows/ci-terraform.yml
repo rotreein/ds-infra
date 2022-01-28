@@ -3,6 +3,8 @@ on:
     branches:
       - master
   pull_request:
+    branches:
+      - 'environment/**'
 
 jobs:
   terraform:
@@ -27,17 +29,17 @@ jobs:
       id: validate
       run: terraform validate -no-color
 
-    - name: Terraform Plan
+    - name: Network Plan
       id: plan
       if: github.event_name == 'pull_request'
       run: |
         git fetch origin master:master
         git diff --name-only master
-        cd modules/network
+        path_location=$(git diff --name-only master environments/ | cut -d / -f3 | uniq)
+        cd $path_location
         terraform init --reconfigure
-        terraform plan -var-file="../../environments/staging/network/terraform.tfvars" -lock=false
-    
-
+        terraform plan -var-file="../../environments/$path_location/terraform.tfvars" -lock=false
+  
       #continue-on-error: true
 
     # - name: Terraform Init
