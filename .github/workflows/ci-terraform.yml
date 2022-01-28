@@ -30,12 +30,10 @@ jobs:
     - name: Terraform Plan
       id: plan
       if: github.event_name == 'pull_request'
-      with:
-        script: |
-          pwd
-          cd modules/network
-          terraform plan -var-file="../../environments/staging/network/terraform.tfvars" -lock=false
-
+      run: |
+        pwd
+        cd modules/network
+        terraform plan -var-file="../../environments/staging/network/terraform.tfvars" -lock=false
     
 
       #continue-on-error: true
