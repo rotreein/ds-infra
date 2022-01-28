@@ -27,16 +27,13 @@ jobs:
       id: validate
       run: terraform validate -no-color
 
-    - name: Terraform init
-      id: init
-      run: terraform init --reconfigure
-
     - name: Terraform Plan
       id: plan
       if: github.event_name == 'pull_request'
       run: |
         pwd
         cd modules/network
+        terraform init --reconfigure
         terraform plan -var-file="../../environments/staging/network/terraform.tfvars" -lock=false
     
 
