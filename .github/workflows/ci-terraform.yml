@@ -31,7 +31,7 @@ jobs:
       id: plan
       if: github.event_name == 'pull_request'
       run: |
-        pwd
+        git diff --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }}
         cd modules/network
         terraform init --reconfigure
         terraform plan -var-file="../../environments/staging/network/terraform.tfvars" -lock=false
