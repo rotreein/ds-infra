@@ -3,16 +3,12 @@ name: Terraform
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
-    branches:
-      - master
-    
 
 jobs:
-        
   terraform:
-    name: TfApply
+    name: 'Terraform'
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -33,12 +29,13 @@ jobs:
       id: validate
       run: terraform validate -no-color
 
-    - name: 'Terraform Plan'
+    - name: Terraform Init
+      uses: ds-infra@master
       id: plan
-      if: github.event_name == 'pull_request
+      if: github.event_name == 'pull_request'
       with:
         tf_actions_version: 0.12.13
-        tf_actions_subcommand: 'plan'
+        tf_actions_subcommand: 'inits'
         tf_actions_working_dir: 'modules/network'
         tf_actions_comment: true
         args: '-var-file="../../environments/staging/network/terraform.tfvars" -lock=false'
