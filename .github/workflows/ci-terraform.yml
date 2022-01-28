@@ -37,7 +37,6 @@ jobs:
       run: |
         pwd
         cd modules/network
-        terra
         terraform plan -var-file="../../environments/staging/network/terraform.tfvars" -lock=false
     
 
