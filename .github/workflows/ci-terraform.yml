@@ -27,32 +27,22 @@ jobs:
       id: validate
       run: terraform validate -no-color
 
-    - name: Network Plan
+    - name: Terraform Plan
       id: plan
       if: github.event_name == 'pull_request'
       run: |
         git fetch origin master:master
         git diff --name-only master
-        path_location=$(git diff --name-only master environments/ | cut -d / -f3 | uniq)
-        cd $path_location
-        terraform init --reconfigure
-        terraform plan -var-file="../../environments/$path_location/terraform.tfvars" -lock=false
+        changes=$(git diff --name-only master environments/ | cut -d / -f3 | uniq)
+        for patch_loc in $changes; do
+          cd $patch_loc
+          terraform init --reconfigure
+          terraform plan -var-file="../../environments/$path_loc/terraform.tfvars" -lock=false
+        done
   
-      #continue-on-error: true
-
-    # - name: Terraform Init
-    #   uses: ds-infra@master
-    #   id: plan
-    #   if: github.event_name == 'pull_request'
-    #   with:
-    #     tf_actions_version: 0.12.13
-    #     tf_actions_subcommand: 'inits'
-    #     tf_actions_working_dir: 'modules/network'
-    #     tf_actions_comment: true
-    #     args: '-var-file="../../environments/staging/network/terraform.tfvars" -lock=false'
-
-    # - name: Terraform apply
-    #   shell: pwsh
-    #   run: |
-    #     cd modules/network
-    #     terraform apply --auto-approve -var-file=../../environments/dev/network/terraform.tfvars -lock=false
+    - name: Terraform apply
+      id: apply
+      run: |
+        cd modules/network
+        terraform init --reconfigure
+        terraform plan -var-file="../../environments/network/terraform.tfvars" -lock=false
