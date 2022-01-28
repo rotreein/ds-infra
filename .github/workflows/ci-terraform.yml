@@ -11,8 +11,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 2
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -33,7 +31,8 @@ jobs:
       id: plan
       if: github.event_name == 'pull_request'
       run: |
-        git diff origin/master HEAD
+        git fetch origin master:master
+        git diff --name-only master
         cd modules/network
         terraform init --reconfigure
         terraform plan -var-file="../../environments/staging/network/terraform.tfvars" -lock=false
