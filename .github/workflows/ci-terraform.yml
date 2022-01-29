@@ -49,4 +49,4 @@ jobs:
         cd modules/network
         terraform init --reconfigure
         terraform plan -var-file="../../environments/staging/network/terraform.tfvars" -lock=false
-        terraform apply --auto-approve -var-file="../../environments/staging/network/terraform.tfvars" -input=false
+        terraform apply -var-file="../../environments/staging/network/terraform.tfvars" --auto-approve -input=false
