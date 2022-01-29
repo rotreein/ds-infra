@@ -43,8 +43,9 @@ jobs:
   
     - name: Terraform apply
       id: apply
+      if: github.event_name == 'push'
       run: |
         pwd
         cd modules/network
         terraform init --reconfigure
-        terraform apply --auto-approve -var-file="../../environments/$env_var/$path_loc/terraform.tfvars"
+        terraform apply --auto-approve -var-file="../../environments/staging/network/terraform.tfvars"
