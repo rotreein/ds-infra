@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket          = "datasaur"
-    dynamodb_table  = "terraform-state-lock-<account_number>"
+    dynamodb_table  = "terraform-state-lock"
     key             = "network.tfstate"
     region          = "ap-southeast-1"
   }
