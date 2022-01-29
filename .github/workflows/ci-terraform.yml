@@ -46,16 +46,10 @@ jobs:
       if: github.event_name == 'push'
       run: |
         git fetch origin ${{ github.event.before }} --depth=1
-        DIFF1=$( git diff --name-only ${{ github.event.before }} ${{ github.sha }} )
-        echo $DIFF1
-        export DIFF2=$( git diff --name-only ${{ github.event.before }} ${{ github.sha }} environments/ | cut -d / -f2 | uniq )
-        echo $DIFF2
-
-#        env_var=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} environments/ | cut -d / -f2 | uniq)
-#        changes=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} environments/ | cut -d / -f3 | uniq)
-#        for path_loc in $changes; do
-#          cd modules/$path_loc
-#          terraform init --reconfigure
-#          terraform plan -var-file="../../environments/$env_var/$path_loc/terraform.tfvars" -lock=false
-#          terraform apply -var-file="../../environments/$env_var/$path_loc/terraform.tfvars" --auto-approve -input=false -lock=false
-#         done
+        env_var=$( git diff --name-only ${{ github.event.before }} ${{ github.sha }} environments/ | cut -d / -f2 | uniq )
+        changes=$( git diff --name-only ${{ github.event.before }} ${{ github.sha }} environments/ | cut -d / -f3 | uniq )
+        for path_loc in $changes; do
+          cd modules/$path_loc
+          terraform init --reconfigure
+          terraform apply --auto-approve -var-file="../../environments/$env_var/$path_loc/terraform.tfvars" -lock=false
+        done
