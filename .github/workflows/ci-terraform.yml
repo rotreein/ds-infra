@@ -35,8 +35,8 @@ jobs:
         git diff --name-only master
         env_var=$(git diff --name-only master environments/ | cut -d / -f2 | uniq)
         changes=$(git diff --name-only master environments/ | cut -d / -f3 | uniq)
-        for patch_loc in $changes; do
-          cd modules/$patch_loc
+        for path_loc in $changes; do
+          cd modules/$path_loc
           terraform init --reconfigure
           terraform plan -var-file="../../environments/$env_var/$path_loc/terraform.tfvars" -lock=false
         done
