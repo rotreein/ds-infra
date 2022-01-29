@@ -33,11 +33,12 @@ jobs:
       run: |
         git fetch origin master:master
         git diff --name-only master
+        env_var=$(git diff --name-only master environments/ | cut -d / -f2 | uniq)
         changes=$(git diff --name-only master environments/ | cut -d / -f3 | uniq)
         for patch_loc in $changes; do
           cd modules/$patch_loc
           terraform init --reconfigure
-          terraform plan -var-file="../../environments/$path_loc/terraform.tfvars" -lock=false
+          terraform plan -var-file="../../environments/$env_var/$path_loc/terraform.tfvars" -lock=false
         done
   
     - name: Terraform apply
@@ -46,4 +47,4 @@ jobs:
         pwd
         cd modules/network
         terraform init --reconfigure
-        terraform apply --auto-approve -var-file="../../environments/network/terraform.tfvars"
+        terraform apply --auto-approve -var-file="../../environments/$env_var/$path_loc/terraform.tfvars"
