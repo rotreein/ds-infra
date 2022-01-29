@@ -1,52 +1,52 @@
-on:
-  push:
-    branches:
-      - master
-  pull_request:
+# on:
+#   push:
+#     branches:
+#       - master
+#   pull_request:
 
-jobs:
-  terraform:
-    name: 'Terraform'
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+# jobs:
+#   terraform:
+#     name: 'Terraform'
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Checkout
+#       uses: actions/checkout@v2
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.REGION }}
+#     - name: Configure AWS credentials
+#       uses: aws-actions/configure-aws-credentials@v1
+#       with:
+#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         aws-region: ${{ secrets.REGION }}
 
-    - name: Terraform Format
-      id: fmt
-      run: terraform fmt -check
+#     - name: Terraform Format
+#       id: fmt
+#       run: terraform fmt -check
 
-    - name: Terraform Validate
-      id: validate
-      run: terraform validate -no-color
+#     - name: Terraform Validate
+#       id: validate
+#       run: terraform validate -no-color
 
-    - name: Terraform Plan
-      id: plan
-      if: github.event_name == 'pull_request'
-      run: |
-        git fetch origin master:master
-        git diff --name-only master
-        env_var=$(git diff --name-only master environments/ | cut -d / -f2 | uniq)
-        changes=$(git diff --name-only master environments/ | cut -d / -f3 | uniq)
-        for path_loc in $changes; do
-          cd modules/$path_loc
-          terraform init --reconfigure
-          terraform plan -var-file="../../environments/$env_var/$path_loc/terraform.tfvars" -lock=false
-        done
+#     - name: Terraform Plan
+#       id: plan
+#       if: github.event_name == 'pull_request'
+#       run: |
+#         git fetch origin master:master
+#         git diff --name-only master
+#         env_var=$(git diff --name-only master environments/ | cut -d / -f2 | uniq)
+#         changes=$(git diff --name-only master environments/ | cut -d / -f3 | uniq)
+#         for path_loc in $changes; do
+#           cd modules/$path_loc
+#           terraform init --reconfigure
+#           terraform plan -var-file="../../environments/$env_var/$path_loc/terraform.tfvars" -lock=false
+#         done
   
-    - name: Terraform apply
-      id: apply
-      if: github.event_name == 'push'
-      run: |
-        pwd
-        cd modules/network
-        terraform init --reconfigure
-        terraform plan -var-file="../../environments/staging/network/terraform.tfvars" -lock=false
-        terraform apply -var-file="../../environments/staging/network/terraform.tfvars" --auto-approve -input=false -lock=false
+#     - name: Terraform apply
+#       id: apply
+#       if: github.event_name == 'push'
+#       run: |
+#         pwd
+#         cd modules/network
+#         terraform init --reconfigure
+#         terraform plan -var-file="../../environments/staging/network/terraform.tfvars" -lock=false
+#         terraform apply -var-file="../../environments/staging/network/terraform.tfvars" --auto-approve -input=false -lock=false
