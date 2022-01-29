@@ -38,7 +38,7 @@ jobs:
         for patch_loc in $changes; do
           cd modules/$patch_loc
           terraform init --reconfigure
-          terraform plan -var-file="../../environments/$env_var/$path_loc/terraform.tfvars" -lock=false
+          terraform plan -var-file="../../environments/$env_var$path_loc/terraform.tfvars" -lock=false
         done
   
     - name: Terraform apply
