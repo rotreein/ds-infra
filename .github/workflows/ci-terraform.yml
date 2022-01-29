@@ -46,7 +46,11 @@ jobs:
       if: github.event_name == 'push'
       run: |
         git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }}
-#        cd modules/network
-#        terraform init --reconfigure
-#        terraform plan -var-file="../../environments/staging/network/terraform.tfvars" -lock=false
-#        terraform apply -var-file="../../environments/staging/network/terraform.tfvars" --auto-approve -input=false -lock=false
+        env_var=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} environments/ | cut -d / -f2 | uniq)
+        changes=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} environments/ | cut -d / -f3 | uniq)
+        for path_loc in $changes; do
+          cd modules/$path_loc
+          terraform init --reconfigure
+          terraform plan -var-file="../../environments/$env_var/$path_loc/terraform.tfvars" -lock=false
+          terraform apply -var-file="../../environments/$env_var/$path_loc/terraform.tfvars" --auto-approve -input=false -lock=false
+        done
