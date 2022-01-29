@@ -46,9 +46,9 @@ jobs:
       if: github.event_name == 'push'
       run: |
         git fetch origin ${{ github.event.before }} --depth=1
-        export DIFF1=$( git diff --name-only ${{ github.event.before }} $GITHUB_SHA )
+        DIFF1=$( git diff --name-only ${{ github.event.before }} ${{ github.sha }} )
         echo $DIFF1
-        export DIFF2=$( git diff --name-only ${{ github.event.before }} $GITHUB_SHA environments/ )
+        export DIFF2=$( git diff --name-only ${{ github.event.before }} ${{ github.sha }} environments/ )
         export $DIFF2
 
 #        env_var=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} environments/ | cut -d / -f2 | uniq)
