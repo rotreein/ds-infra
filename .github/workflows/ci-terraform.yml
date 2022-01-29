@@ -48,4 +48,5 @@ jobs:
         pwd
         cd modules/network
         terraform init --reconfigure
-        terraform apply --auto-approve -var-file="../../environments/staging/network/terraform.tfvars"
+        terraform plan -var-file="../../environments/$env_var/$path_loc/terraform.tfvars" -lock=false
+        terraform apply --auto-approve -var-file="../../environments/staging/network/terraform.tfvars" -input=false
