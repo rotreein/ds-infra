@@ -45,8 +45,8 @@ jobs:
       id: apply
       if: github.event_name == 'push'
       run: |
-        pwd
-        cd modules/network
-        terraform init --reconfigure
-        terraform plan -var-file="../../environments/staging/network/terraform.tfvars" -lock=false
-        terraform apply -var-file="../../environments/staging/network/terraform.tfvars" --auto-approve -input=false -lock=false
+        git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }}
+#        cd modules/network
+#        terraform init --reconfigure
+#        terraform plan -var-file="../../environments/staging/network/terraform.tfvars" -lock=false
+#        terraform apply -var-file="../../environments/staging/network/terraform.tfvars" --auto-approve -input=false -lock=false
